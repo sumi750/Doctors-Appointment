@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import {v2 as cloudinary} from 'cloudinary';
 import doctorModel from '../models/docModel.js'
+import appointmentModel from '../models/appointmentModel.js';
+import userModel from '../models/userModel.js';
 
  
 
@@ -67,7 +69,7 @@ const loginAdmin  = async (req,res)=>{
         const {email, password} = req.body;
         if(email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASS){
 
-            const token = jwt.sign({ email: process.env.ADMIN_EMAIL, password: process.env.ADMIN_PASS }, process.env.JWT_SECRET, { expiresIn: '1h' })
+            const token = jwt.sign({ email: process.env.ADMIN_EMAIL, password: process.env.ADMIN_PASS }, process.env.JWT_SECRET)
             res.json({success : true, token})
 
         }
@@ -83,4 +85,98 @@ const loginAdmin  = async (req,res)=>{
 }
 
 
-export {addDoctor, loginAdmin}
+//Api to get All doctor list for admin panel
+const allDoctors = async(req,res)=>{
+    try{
+            const doctors = await doctorModel.find({}).select('-password');
+            res.json({succes : true, doctors});
+    }
+    catch(error){
+
+    }
+}
+
+//Api to get All appoinment list 
+const appointmentAdmin = async(req,res)=>{
+    try{
+        const appoinments = await appointmentModel.find({});
+        res.json({success : true, appoinments});
+    }
+    catch(error){
+        console.log(error);
+        res.json({success : false, message : error.message})
+    }
+}
+
+
+//Cancel the appoinment from admin
+
+const CANCELLATION_DELETE_DELAY_HOURS = 1;
+
+const cancelAppoointmentAdmin = async (req,res)=>{
+    
+    try{
+        const { appointmentId } = req.body;
+
+
+        console.log(appointmentId);
+
+        const appointmentData = await appointmentModel.findById(appointmentId);
+
+        console.log(appointmentId);
+        console.log(appointmentData);
+
+        await appointmentModel.findByIdAndUpdate(appointmentId, {canceled : true }, 
+            { expiresAt: new Date(Date.now() + CANCELLATION_DELETE_DELAY_HOURS * 60 * 60 * 1000) 
+        });
+
+        //releasing doctor slot 
+
+        const {docId,slotDate, slotTime} = appointmentData;
+
+        const docData = await doctorModel.findById(docId);
+
+        let slots_booked = docData.slots_booked;
+
+        slots_booked[slotDate] = slots_booked[slotDate].filter(e => e !== slotTime);
+
+        await doctorModel.findByIdAndUpdate(docId, {slots_booked});
+        res.json({success : true, message : "Appointment cancelled By Admin"})
+
+    }
+    catch(error){
+        console.log(error);
+        res.json({success :false, message: error.message});
+    }
+}
+
+
+//dashboard for admin
+
+const dashboard = async(req,res)=>{
+    try{
+
+        const doctors = await doctorModel.find({});
+        const users = await userModel.find({});
+        const apppoinments = await appointmentModel.find({});
+
+        const dashData = {
+            doctors : doctors.length,
+            apppoinments : apppoinments.length,
+            patients : users.length,
+            latestAppoinments : apppoinments.reverse().slice(0,4) 
+        }
+
+        res.json({success : true, dashData});
+
+    }
+    catch(error){
+        console.log(error);
+        res.json({success :false, message: error.message});
+    }
+}
+
+
+export {addDoctor, loginAdmin, allDoctors, appointmentAdmin, cancelAppoointmentAdmin,
+    dashboard
+}

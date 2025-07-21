@@ -10,7 +10,7 @@ const Login = () => {
     const[email, setEmail] = useState('')
     const[password, setPassword] = useState('')
 
-    const{setAToken,backendURl} = useContext(AdminContext);
+    const{setAToken,backendURl} = useContext(AdminContext); 
 
     const submitHandler = async (e)=>{
       e.preventDefault();
@@ -32,7 +32,7 @@ const Login = () => {
 
       }
       catch(err){
-
+          toast.error(err.message);
       }
     }
 

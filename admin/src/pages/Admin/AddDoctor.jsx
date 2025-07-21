@@ -44,13 +44,18 @@ const AddDoctor = () => {
             formData.append('degree', degree)
             formData.append('address', JSON.stringify({line1 : adress1, line2 : adress2}))
 
-            formData.forEach((value, key)=>{
-                console.log(`${key} : ${value}`);
-            })
-
             const { data } = await axios.post(backendURl+'/api/admin/add-doctor', formData , {headers:{ aToken }});
             if(data.success){
                 toast.success(data.message);
+                setDocImg(false);
+                setName('');
+                setPassword('');
+                setEmail('');
+                setAdress1('');
+                setAdress2('');
+                setDegree('');
+                setAbout('');
+                setFee('');
             }
             else{
                 toast.error(data.message);
@@ -58,12 +63,10 @@ const AddDoctor = () => {
 
         }
         catch(error){
-
+            toast.error(error.message);
+            console.log(error);
         }
     }
-
-
-
 
 
   return (

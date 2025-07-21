@@ -2,7 +2,10 @@ import { useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import {Home, Doctors, Login, About, Contact, MyPro, MyAppointment, Appointment, } from './pages/page'
 import Navbar from './components/Navbar'
-import Footer from './components/Footer' 
+import Footer from './components/Footer'
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -10,6 +13,7 @@ function App() {
   return (
     <>
     <div className='mx-15 sm:ms[10%]'>
+      <ToastContainer />
       <Navbar />
       <Routes>
         <Route path='/' element={<Home />} />
