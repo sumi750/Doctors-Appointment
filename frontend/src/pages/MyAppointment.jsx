@@ -128,18 +128,21 @@ const MyAppointment = () => {
                 </div>
                 <div>  </div>
                 <div className='flex flex-col gap-2 justify-end'>
-                  { !item.canceled && !item.payment &&
+                  { !item.canceled && !item.payment && !item.isCompleted && 
                     <button onClick={()=>appoinmentRazroPay(item._id)}  className='text-sm text-stone-500 text-center sm:min-w-45 py-2 border rounded hover:bg-[#5f6fff] hover:text-white transition-all duration-300'>Pay Online </button>
                   }  
 
                   {
-                    !item.canceled && item.payment  && <button className='sm:min-w-48 py-2 border border-green-500 bg-gray-200 rounded text-green-500'>Paid</button>
+                    !item.canceled && item.payment  &&  !item.isCompleted &&  <button className='sm:min-w-48 py-2 border border-green-500 bg-gray-200 rounded text-green-500'>Paid</button>
                   }
 
-                  {!item.canceled &&  <button onClick={()=>canelAppointment(item._id)} className='text-sm text-stone-500 text-center sm:min-w-45 py-2 border rounded hover:bg-red-500 hover:text-black transition-all duration-300'>Cancel Appointment</button>
+                  {!item.canceled && !item.isCompleted &&  <button onClick={()=>canelAppointment(item._id)} className='text-sm text-stone-500 text-center sm:min-w-45 py-2 border rounded hover:bg-red-500 hover:text-black transition-all duration-300'>Cancel Appointment</button>
                   }  
 
-                  {item.canceled && <button className='sm:min-w-48 py-2 border border-red-500 rounded text-red-500'>Appointment cancelled</button>}
+                  {item.canceled && !item.isCompleted && <button className='sm:min-w-48 py-2 border border-red-500 rounded text-red-500'>Appointment cancelled</button>}
+                  {
+                    item.isCompleted && <button className='sm:min-w-48 py-2 border border-green-500 rounded text-green-500'>Completed</button>
+                  }
                 </div>  
             </div>
           ))}
