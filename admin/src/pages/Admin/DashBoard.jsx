@@ -12,7 +12,7 @@ const DashBoard = () => {
 
     useEffect(()=>{
       if(aToken){
-        dashBoardData();
+        dashBoardData(); 
       }
     }, [aToken])
 
