@@ -7,6 +7,7 @@ import adminRouter from './routes/adminRoute.js';
 import doctorRouter from './routes/doctorRoute.js'
 import userRouter from './routes/userRoute.js';
 
+
 //app Config 
 const app = express();
 const port = process.env.PORT || 3005
@@ -22,7 +23,6 @@ app.use(cors());
 app.use('/api/admin', adminRouter)  //localhost:3005/api/admin/add-doctor
 app.use('/api/doctor', doctorRouter)   //localhost:3005/appi/doctor/
 app.use('/api/user',userRouter )
-
 
 
 app.get('/', (req,res)=>{
